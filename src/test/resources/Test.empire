@@ -1,0 +1,10 @@
+bind a=b
+bind c=d
+
+(a=x c=y) {
+  property=value
+}
+
+(a=x c=~/y/) {
+  key=value
+}

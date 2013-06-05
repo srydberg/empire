@@ -1,4 +1,4 @@
-empire
+Empire
 ======
 
-Empire properties language
+The Empire properties language
