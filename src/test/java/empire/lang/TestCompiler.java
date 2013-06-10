@@ -61,7 +61,7 @@ public class TestCompiler {
 	 */
 
 	private String compile(String source, String... props ) throws IOException {
-		Map<String,Object> properties = new HashMap<>();
+		Map<String,Object> properties = new HashMap<String,Object>();
 		for(int i=0; i<props.length;i+=2) {
 			properties.put(props[i],props[i+1]);
 		}

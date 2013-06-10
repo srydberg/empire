@@ -22,13 +22,13 @@ public class Compiler
 	private final InputStream input;
 	private final OutputStream output;
 	private final Map<String,Object> properties;
-	
+
 	public Compiler( InputStream input, OutputStream output, Map<String, Object> properties ) {
 		this.input = input;
 		this.output = output;
 		this.properties = properties;
 	}
-	
+
 	public void compile() throws IOException {
 		final ANTLRInputStream input;
 		final Writer writer;
@@ -41,25 +41,25 @@ public class Compiler
 
 		EmpireParser parser = new EmpireParser(tokens);
 		ParseTree tree = parser.prog();
-		
+
 		EmpireBaseListener listener = new EmpireBaseListener() {
-			Map<String, String> bindings = new HashMap<>();
+			Map<String, String> bindings = new HashMap<String, String>();
 			public void exitBinding( EmpireParser.BindingContext ctx ) {
 				String property = ctx.Identifier(1).getText();
-				
+
 				if( !properties.containsKey( property ) ) {
 					return;
 				}
-				
+
 				Object value = properties.get( property );
 				bindings.put(ctx.Identifier(0).getText(), value.toString());
 			}
-			
+
 			String regex;
 			public void exitLiteral(empire.lang.EmpireParser.LiteralContext ctx) {
 				TerminalNode identifier = ctx.Identifier();
 				TerminalNode regexLiteral = ctx.RegexLiteral();
-				
+
 				if(identifier != null) {
 					regex = identifier.getText();
 				}
@@ -69,8 +69,8 @@ public class Compiler
 					regex = regex.substring(2, regex.length()-1);
 				}
 			};
-			
-			Map<String, String> conditions = new HashMap<>();
+
+			Map<String, String> conditions = new HashMap<String,String>();
 			public void exitCondition(empire.lang.EmpireParser.ConditionContext ctx) {
 				conditions.put(ctx.Identifier().getText(), regex);
 				regex=null;
@@ -87,7 +87,7 @@ public class Compiler
 				boolean conditionsValid = true;
 				for(String key:conditions.keySet()) {
 					String value = conditions.get(key);
-					
+
 					if(!bindings.containsKey( key )) {
 						conditionsValid = false;
 						break;
@@ -99,7 +99,7 @@ public class Compiler
 						break;
 					}
 				}
-				
+
 				if(conditionsValid) {
 					try	{
 						writer.write( output );
@@ -108,7 +108,7 @@ public class Compiler
 						throw new RuntimeException( e );
 					}
 				}
-				
+
 				conditions.clear();
 				properties.clear();
 			}
